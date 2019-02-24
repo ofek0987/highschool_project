@@ -23,29 +23,29 @@ import android.view.View;
 import android.widget.ImageView;
 
 
-public class Circle extends View implements SensorEventListener
+public class ViewGame extends View implements SensorEventListener
 {
     Handler handler;
-    boolean isFalling = true , IsOutside = false;
+    boolean isFalling = true , IsOutside = false , isSet = true;
     Context context;
     int points = 0;
 
-    double  R_a = 100 ,Y_a = R_a + 1 , X_a = R_a + 1 , adderY_a = 0, adderX_a = 2  , X_b = 250 , adderX_b = 10 , R_b = 100 , Y_b = 900 , FallAx = 1;
-    Paint p = new Paint() , pp = new Paint() ;
+    double  R_a  ,Y_a  , X_a  , adderY_a = 0, adderX_a   , X_b  , adderX_b  , R_b  , Y_b , FallAx = 1;
+    Paint  pp = new Paint() ;
     Bitmap putin , trump;
 
 
 
-    public Circle(Context context)
+    public ViewGame(Context context)
     {
         super(context);
         this.context=context;
         putin = BitmapFactory.decodeResource(getResources() , R.drawable.putin);
-        trump = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources() , R.drawable.trump) , (int) R_a *2 ,(int) R_a *2 , false );
+       // trump = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources() , R.drawable.trump) , (int) R_a *2 ,(int) R_a *2 , false );
 
-        RoundedBitmapDrawable Rtrump = RoundedBitmapDrawableFactory.create(getResources() , trump);
-        Rtrump.setCornerRadius((float)R_a);
-        trump = drawableToBitmap(Rtrump);
+       // RoundedBitmapDrawable Rtrump = RoundedBitmapDrawableFactory.create(getResources() , trump);
+       // Rtrump.setCornerRadius((float)R_a);
+       // trump = drawableToBitmap(Rtrump);
 
 
 
@@ -101,10 +101,39 @@ public class Circle extends View implements SensorEventListener
     @Override
     protected  void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        if(isSet) {
+
+
+            R_a = R_b = canvas.getHeight() / 15;
+            X_b =R_b + 1;
+            Y_a = R_a + 1;
+            X_a = R_a + 1;
+
+            adderX_b = 0.00925 * canvas.getWidth();
+            adderX_a = 0.00185 * canvas.getWidth();
+
+            trump = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources() , R.drawable.trump) , (int) R_a *2 ,(int) R_a *2 , false );
+
+            RoundedBitmapDrawable Rtrump = RoundedBitmapDrawableFactory.create(getResources() , trump);
+            Rtrump.setCornerRadius((float)R_a);
+            trump = drawableToBitmap(Rtrump);
+            isSet = false;
+        }
+
+
+        FallAx  = FallAx - 0.0001 * (FallAx - 0.3);
+        R_b = R_b - 0.0005 * (R_b - 0.03 * canvas.getHeight());
+        if(adderX_b > 0) {
+            adderX_b = adderX_b + 0.0001 * (0.0277 * canvas.getWidth() - adderX_b);
+        }
+        else {
+            adderX_b = adderX_b - 0.0001 * (0.0277 * canvas.getWidth() + adderX_b);
+        }
+
         Y_b = canvas.getHeight() - R_b;
 
 
-        if(X_a + R_a >= canvas.getWidth()  || X_a - R_a <= 0) // פגיעה בצידי המסך
+        if(X_a + R_a >= canvas.getWidth()  || X_a - R_a <= 0)
         {
             adderX_a = -1 * adderX_a;
         }
@@ -112,30 +141,35 @@ public class Circle extends View implements SensorEventListener
         {
             adderX_b = -1 * adderX_b;
         }
-        if(Y_a + R_a >= canvas.getHeight()) // פגיעה בתחתית המסך
+        if(Y_a + R_a >= canvas.getHeight())
         {
 
             isFalling = false;
         }
-        if( Y_a - R_a <= 0) // פגיעה בתקרת המסך
+        if( Y_a - R_a <= 0)
         {
             isFalling = true;
         }
-        if(isFalling) // הדמיית נפילה
+        double k = Math.sqrt((double)canvas.getHeight() / 1680) / FallAx;
+        if(isFalling)
         {
-            adderY_a = Math.sqrt(Math.abs(Y_a -  R_a)) / FallAx ;     // FallAx ;
+
+            adderY_a =k * Math.sqrt(Math.abs(Y_a -  R_a))   ;
         }
         else {
 
-            adderY_a = -1 * Math.sqrt(Math.abs(Y_a -  R_a)) / FallAx ;
+            adderY_a = k * -1 *  Math.sqrt(Math.abs(Y_a -  R_a)) ;
 
         }
 
 
 
-        X_a += adderX_a; // תאוצה \ מהירות
+        X_a += adderX_a;
         Y_a += adderY_a;
         X_b += adderX_b;
+
+
+
 
 
 
@@ -159,25 +193,17 @@ public class Circle extends View implements SensorEventListener
         else {
             IsOutside = true;
         }
-        FallAx  = FallAx - 0.0001 * (FallAx - 0.3); // העלת דרגת קושי עם הזמן
-        R_b = R_b - 0.0005 * (R_b - 50);
-        if(adderX_b > 0) {
-            adderX_b = adderX_b + 0.0001 * (30 - adderX_b);
-        }
-        else {
-            adderX_b = adderX_b - 0.0001 * (30 + adderX_b);
-        }
 
-        p.setColor(Color.RED);
-        pp.setTextSize(50); // גודל אותיות ניקוד
+
+        pp.setTextSize((float) 0.05 * canvas.getHeight()); // גודל אותיות ניקוד
         //canvas.drawCircle((float)X_a , (float)Y_a , (float)R_a , new Paint()); // ציור
         //canvas.drawCircle((float)X_b , (float)Y_b , (float)R_b , p);
         String Spoints = "Points : " +  String.valueOf(points);
-        canvas.drawText(Spoints , 450 , 100 , pp);
+       canvas.drawText(Spoints , 10 , (float)  canvas.getHeight() / 17 , pp);
+        //canvas.drawText(String.valueOf(canvas.getHeight()) , 10 , (float)  canvas.getHeight() / 17 , pp);
         RoundedBitmapDrawable Rputin = RoundedBitmapDrawableFactory.create(getResources() , Bitmap.createScaledBitmap(putin , (int) R_b * 2 , (int) R_b * 2 , false));
         Rputin.setCornerRadius((float)R_b);
         canvas.drawBitmap(drawableToBitmap(Rputin) ,(float) (X_b - R_b), (float)(Y_b - R_b)  , new Paint());
-
         canvas.drawBitmap(trump , (float)(X_a - R_a) , (float)(Y_a - R_a) , new Paint());
 
 
@@ -188,7 +214,7 @@ public class Circle extends View implements SensorEventListener
         Sensor sensor = sensorEvent.sensor;
         if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             double  deltax = sensorEvent.values[0];
-           double  deltay = sensorEvent.values[1];
+            double  deltay = sensorEvent.values[1];
            // double  deltaz = sensorEvent.values[2];
             X_a += deltax;
             Y_a += deltay;
