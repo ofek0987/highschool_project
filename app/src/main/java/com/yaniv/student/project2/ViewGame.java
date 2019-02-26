@@ -23,9 +23,10 @@ import android.view.View;
 import android.widget.ImageView;
 
 
-public class ViewGame extends View implements SensorEventListener
+public class ViewGame extends View
 {
     Handler handler;
+    Thread thread;
     boolean isFalling = true , IsOutside = false , isSet = true;
     Context context;
     int points = 0;
@@ -39,6 +40,7 @@ public class ViewGame extends View implements SensorEventListener
     public ViewGame(Context context)
     {
         super(context);
+
         this.context=context;
         putin = BitmapFactory.decodeResource(getResources() , R.drawable.putin);
        // trump = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources() , R.drawable.trump) , (int) R_a *2 ,(int) R_a *2 , false );
@@ -61,13 +63,17 @@ public class ViewGame extends View implements SensorEventListener
             }
         });
 
-
+      thread =   new Thread(new GameThead(handler));
 
     }
     public void StartMovment()
     {
-        new Thread(new GameThead(handler)).start();
+        thread.start();
     }
+   public void StopMovment()
+    {
+      //  thread.stop();
+   }
 
 
     public static Bitmap drawableToBitmap (Drawable drawable) {
@@ -209,21 +215,15 @@ public class ViewGame extends View implements SensorEventListener
 
     }
 
-    @Override
-    public void onSensorChanged(SensorEvent sensorEvent) {
-        Sensor sensor = sensorEvent.sensor;
-        if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            double  deltax = sensorEvent.values[0];
-            double  deltay = sensorEvent.values[1];
-           // double  deltaz = sensorEvent.values[2];
-            X_a += deltax;
-            Y_a += deltay;
 
-        }
-    }
+    public void Add_X_a (double a) {
+        X_a += a;
 
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int i) {
+}
+    public void Add_Y_a (double a) {
+        Y_a += a;
 
     }
+
+
 }

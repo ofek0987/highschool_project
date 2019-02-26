@@ -5,15 +5,18 @@ import android.os.Handler;
 
 public class GameThead implements Runnable {
     Handler handler;
+    Boolean isRun;
     public GameThead(Handler handler)
     {
         this.handler = handler;
+        isRun = true;
     }
+
 
 
     @Override
     public void run() {
-        while (true)
+        while (isRun)
         {
 
             handler.sendEmptyMessage(0);

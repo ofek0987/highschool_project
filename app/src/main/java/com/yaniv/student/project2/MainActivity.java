@@ -2,11 +2,12 @@ package com.yaniv.student.project2;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.FrameLayout;
+import android.view.View;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  {
    // ViewGame ViewGame;
-    Intent intent;
+    Intent gameIntent , termsIntent;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,8 +20,23 @@ public class MainActivity extends AppCompatActivity {
 
 
        // ViewGame.StartMovment();
-        intent = new Intent(this , Game.class);
-        startActivity(intent);
+        gameIntent = new Intent(this , Game.class);
+        termsIntent = new Intent(this , Terms_of_Use.class);
+
+
+
+    }
+
+
+
+
+    public void startGame(View view) {
+        startActivity(gameIntent);
+    }
+
+
+    public void openTeams(View view) {
+        startActivity(termsIntent);
 
     }
 }
