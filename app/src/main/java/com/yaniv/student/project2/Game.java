@@ -32,7 +32,7 @@ public class Game extends AppCompatActivity implements SensorEventListener {
     protected void onResume() {
         super.onResume();
 
-        senSensorManager.registerListener(this, senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+        senSensorManager.registerListener(this, senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_FASTEST);
 
     }
     protected void onPause() {
@@ -45,11 +45,10 @@ public class Game extends AppCompatActivity implements SensorEventListener {
         Sensor mySensor = sensorEvent.sensor;
         if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             double deltax = sensorEvent.values[0];
-            double deltay = sensorEvent.values[1];
-            double deltaz = sensorEvent.values[2];
+
             if (viewGame != null) {
-//                viewGame.Add_X_a(-10 *deltax);
-//                viewGame.Add_Y_a( 10 * deltay);
+              viewGame.Add_X_a(- deltax);
+
             }
 
         }
@@ -65,8 +64,9 @@ public class Game extends AppCompatActivity implements SensorEventListener {
             viewGame.StopMovment();
         }
         else {
-            viewGame.StartMovment();
+            viewGame.ContinueMovment();
         }
+        run = !run;
 
     }
 }
