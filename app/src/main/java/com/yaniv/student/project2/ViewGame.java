@@ -14,6 +14,7 @@ import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Message;
 
@@ -28,10 +29,10 @@ public class ViewGame extends View
 {
     Handler handler;
     Thread thread;
-    boolean isFalling = true , IsOutside = false , isSet = true;
+    boolean isFalling = true , IsOutside = false , isSet = true , isRun = true;
     Context context;
     int points = 0 , life = 3;
-
+    MediaPlayer pingpong;
     double  R_a  ,Y_a  , X_a  , adderY_a = 0   , X_b  , adderX_b  , R_b  , Y_b , FallAx = 1 , WidthC;
     Paint  pp = new Paint() ;
     Bitmap putin , trump , heart;
@@ -48,7 +49,7 @@ public class ViewGame extends View
         heart = BitmapFactory.decodeResource(getResources() , R.drawable.heart);
 
 
-
+        pingpong = MediaPlayer.create(context , R.raw.pingpong);
 
 
         handler = new Handler(new Handler.Callback()
@@ -68,15 +69,18 @@ public class ViewGame extends View
     public void StartMovment()
     {
         thread.start();
+        isRun = true;
     }
    public void StopMovment()
     {
           Gm.setRun(false);
+          isRun = false;
     }
 
     public void ContinueMovment()
     {
         Gm.setRun(true);
+        isRun = true;
 
     }
 
@@ -112,37 +116,36 @@ public class ViewGame extends View
     @Override
     protected  void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if(isSet) {
+        if (isSet) {
 
             WidthC = canvas.getWidth();
-            heart = Bitmap.createScaledBitmap(heart , (int)WidthC / 20 , (int)WidthC / 20 , false);
+            heart = Bitmap.createScaledBitmap(heart, (int) WidthC / 20, (int) WidthC / 20, false);
             R_a = R_b = canvas.getHeight() / 15;
-            X_b =R_b + 1;
+            X_b = R_b + 1;
             Y_a = R_a + 1;
             X_a = canvas.getWidth() / 2;
 
             adderX_b = 0.00925 * canvas.getWidth();
 
 
-            trump = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources() , R.drawable.trump) , (int) R_a *2 ,(int) R_a *2 , false );
+            trump = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.trump), (int) R_a * 2, (int) R_a * 2, false);
 
-            RoundedBitmapDrawable Rtrump = RoundedBitmapDrawableFactory.create(getResources() , trump);
-            Rtrump.setCornerRadius((float)R_a);
+            RoundedBitmapDrawable Rtrump = RoundedBitmapDrawableFactory.create(getResources(), trump);
+            Rtrump.setCornerRadius((float) R_a);
             trump = drawableToBitmap(Rtrump);
             isSet = false;
         }
 
 
-        FallAx  = FallAx - 0.0001 * (FallAx - 0.3);
-        R_b = R_b - 0.0003 * (R_b - 0.03 * canvas.getHeight());
-        if(adderX_b > 0) {
-            adderX_b = adderX_b + 0.0001 * (0.05 * canvas.getWidth() - adderX_b);
-        }
-        else {
-            adderX_b = adderX_b - 0.0001 * (0.05 * canvas.getWidth() + adderX_b);
-        }
+            FallAx = FallAx - 0.0001 * (FallAx - 0.3);
+            R_b = R_b - 0.0003 * (R_b - 0.03 * canvas.getHeight());
+            if (adderX_b > 0) {
+                adderX_b = adderX_b + 0.0001 * (0.05 * canvas.getWidth() - adderX_b);
+            } else {
+                adderX_b = adderX_b - 0.0001 * (0.05 * canvas.getWidth() + adderX_b);
+            }
 
-        Y_b = canvas.getHeight() - R_b;
+            Y_b = canvas.getHeight() - R_b;
 
 
 
@@ -175,8 +178,8 @@ public class ViewGame extends View
 
 
 
-        Y_a += adderY_a;
-        X_b += adderX_b;
+           Y_a += adderY_a;
+           X_b += adderX_b;
 
 
 
@@ -194,6 +197,7 @@ public class ViewGame extends View
             IsOutside = false;
 
             isFalling = false;
+            new Thread(new AudioThread(pingpong , 99)).start();
 
 
 
@@ -204,6 +208,17 @@ public class ViewGame extends View
             IsOutside = true;
         }
 
+
+
+        pp.setTextSize((float) 0.05 * canvas.getHeight());
+
+        String Spoints = "Points : " +  String.valueOf(points);
+       canvas.drawText(Spoints , 10 , (float)  canvas.getHeight() / 17 , pp);
+
+        RoundedBitmapDrawable Rputin = RoundedBitmapDrawableFactory.create(getResources() , Bitmap.createScaledBitmap(putin , (int) R_b * 2 , (int) R_b * 2 , false));
+        Rputin.setCornerRadius((float)R_b);
+        canvas.drawBitmap(drawableToBitmap(Rputin) ,(float) (X_b - R_b), (float)(Y_b - R_b)  , new Paint());
+        canvas.drawBitmap(trump , (float)(X_a - R_a) , (float)(Y_a - R_a) , new Paint());
 
         if(life == 3)
         {
@@ -225,32 +240,22 @@ public class ViewGame extends View
             Gm.setEnded(true);
             Bitmap over = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources() , R.drawable.game_over) , canvas.getWidth() / 3 , canvas.getHeight()/ 5 , false);
             canvas.drawBitmap(over , (float) canvas.getWidth() / 3 ,2 * canvas.getHeight() / 5 , new Paint() );
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                Thread.sleep(3000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
         }
-        pp.setTextSize((float) 0.05 * canvas.getHeight());
-
-        String Spoints = "Points : " +  String.valueOf(points);
-       canvas.drawText(Spoints , 10 , (float)  canvas.getHeight() / 17 , pp);
-
-        RoundedBitmapDrawable Rputin = RoundedBitmapDrawableFactory.create(getResources() , Bitmap.createScaledBitmap(putin , (int) R_b * 2 , (int) R_b * 2 , false));
-        Rputin.setCornerRadius((float)R_b);
-        canvas.drawBitmap(drawableToBitmap(Rputin) ,(float) (X_b - R_b), (float)(Y_b - R_b)  , new Paint());
-        canvas.drawBitmap(trump , (float)(X_a - R_a) , (float)(Y_a - R_a) , new Paint());
-
 
     }
 
 
     public void Add_X_a (double a) {
-        if(X_a + R_a + 10 < WidthC && a > 0) {
+        if(X_a + R_a + 10 < WidthC && a > 0 && isRun) {
             X_a += a;
         }
 
-         else if(X_a - R_a - 10 > 0 && a < 0)
+         else if(X_a - R_a - 10 > 0 && a < 0 && isRun)
         {
             X_a += a;
         }
