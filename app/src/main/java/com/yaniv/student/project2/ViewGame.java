@@ -21,6 +21,7 @@ import android.os.Message;
 import android.provider.ContactsContract;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -29,11 +30,11 @@ public class ViewGame extends View
 {
     Handler handler;
     Thread thread;
-    boolean isFalling = true , IsOutside = false , isSet = true , isRun = true;
+    boolean isFalling = true , IsOutside = false , isSet = false , isRun = true , isToBack = false;
     Context context;
-    int points = 0 , life = 3;
+    int points = 0 , life = 3 , touch = 0;
     MediaPlayer pingpong;
-    double  R_a  ,Y_a  , X_a  , adderY_a = 0   , X_b  , adderX_b  , R_b  , Y_b , FallAx = 1 , WidthC;
+    double  R_a  ,Y_a  , X_a  , adderY_a = 0   , X_b  , adderX_b  , R_b  , Y_b , FallAx = 1 , WidthC , HightC;
     Paint  pp = new Paint() ;
     Bitmap putin , trump , heart;
 
@@ -77,6 +78,44 @@ public class ViewGame extends View
           isRun = false;
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        //return super.onTouchEvent(event);
+        touch++;
+        if(touch >= 2)
+        {
+            touch = 0;
+
+            Gm.setRun(!Gm.getRun());
+            isRun = Gm.getRun();
+        }
+        if(Gm.getEnded())
+        {
+          if(event.getX() >= WidthC * 3 / 4 && event.getY() >= HightC / 8 && event.getY() <= HightC * 2 / 8 )
+          {
+              isSet = false;
+              Gm = new GameThead(handler);
+              thread =   new Thread(Gm);
+              life = 3;
+              thread.start();
+              touch = 0;
+
+          }
+            if(event.getX() <= WidthC / 4 && event.getY() >= HightC / 8 && event.getY() <= HightC * 2 / 8 )
+            {
+                isToBack = true;
+
+            }
+        }
+
+
+
+
+
+        return true;
+
+    }
+
     public void ContinueMovment()
     {
         Gm.setRun(true);
@@ -116,8 +155,8 @@ public class ViewGame extends View
     @Override
     protected  void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (isSet) {
-
+        if (!isSet) {
+            HightC = canvas.getHeight();
             WidthC = canvas.getWidth();
             heart = Bitmap.createScaledBitmap(heart, (int) WidthC / 20, (int) WidthC / 20, false);
             R_a = R_b = canvas.getHeight() / 15;
@@ -133,7 +172,7 @@ public class ViewGame extends View
             RoundedBitmapDrawable Rtrump = RoundedBitmapDrawableFactory.create(getResources(), trump);
             Rtrump.setCornerRadius((float) R_a);
             trump = drawableToBitmap(Rtrump);
-            isSet = false;
+            isSet = true;
         }
 
 
@@ -208,18 +247,6 @@ public class ViewGame extends View
             IsOutside = true;
         }
 
-
-
-        pp.setTextSize((float) 0.05 * canvas.getHeight());
-
-        String Spoints = "Points : " +  String.valueOf(points);
-       canvas.drawText(Spoints , 10 , (float)  canvas.getHeight() / 17 , pp);
-
-        RoundedBitmapDrawable Rputin = RoundedBitmapDrawableFactory.create(getResources() , Bitmap.createScaledBitmap(putin , (int) R_b * 2 , (int) R_b * 2 , false));
-        Rputin.setCornerRadius((float)R_b);
-        canvas.drawBitmap(drawableToBitmap(Rputin) ,(float) (X_b - R_b), (float)(Y_b - R_b)  , new Paint());
-        canvas.drawBitmap(trump , (float)(X_a - R_a) , (float)(Y_a - R_a) , new Paint());
-
         if(life == 3)
         {
 
@@ -239,29 +266,43 @@ public class ViewGame extends View
         else {
             Gm.setEnded(true);
             Bitmap over = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources() , R.drawable.game_over) , canvas.getWidth() / 3 , canvas.getHeight()/ 5 , false);
+            Bitmap startover = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources() , R.drawable.startover) , canvas.getWidth() / 4 , canvas.getHeight() / 8 , false);
+            Bitmap back = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources() , R.drawable.back) , canvas.getWidth() / 4 , canvas.getHeight() / 8 , false);
+            canvas.drawBitmap(back , 0 , canvas.getHeight()  / 8 , new Paint()) ;
+            canvas.drawBitmap(startover , canvas.getWidth() * 3 / 4 , canvas.getHeight()  / 8 , new Paint()) ;
             canvas.drawBitmap(over , (float) canvas.getWidth() / 3 ,2 * canvas.getHeight() / 5 , new Paint() );
-//            try {
-//                Thread.sleep(3000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
+
         }
+
+        pp.setTextSize((float) 0.05 * canvas.getHeight());
+
+        String Spoints = "Points : " +  String.valueOf(points);
+       canvas.drawText(Spoints , 10 , (float)  canvas.getHeight() / 17 , pp);
+
+        RoundedBitmapDrawable Rputin = RoundedBitmapDrawableFactory.create(getResources() , Bitmap.createScaledBitmap(putin , (int) R_b * 2 , (int) R_b * 2 , false));
+        Rputin.setCornerRadius((float)R_b);
+        canvas.drawBitmap(drawableToBitmap(Rputin) ,(float) (X_b - R_b), (float)(Y_b - R_b)  , new Paint());
+        canvas.drawBitmap(trump , (float)(X_a - R_a) , (float)(Y_a - R_a) , new Paint());
+
+
 
     }
 
 
     public void Add_X_a (double a) {
+
         if(X_a + R_a + 10 < WidthC && a > 0 && isRun) {
-            X_a += a;
+            X_a +=  a;
         }
 
          else if(X_a - R_a - 10 > 0 && a < 0 && isRun)
         {
-            X_a += a;
+            X_a +=  a;
         }
 
 }
 
-
-
+    public boolean isToBack() {
+        return isToBack;
+    }
 }

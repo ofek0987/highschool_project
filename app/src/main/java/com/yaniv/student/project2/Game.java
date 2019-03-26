@@ -1,11 +1,14 @@
 package com.yaniv.student.project2;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,7 +16,9 @@ import android.widget.FrameLayout;
 
 public class Game extends AppCompatActivity implements SensorEventListener {
     ViewGame viewGame;
-    Boolean run = true;
+    Handler toBackHandler;
+    Thread toBackThread;
+    toBackListenerThread toBackListenerThread;
     private SensorManager senSensorManager;
 
     @Override
@@ -22,6 +27,18 @@ public class Game extends AppCompatActivity implements SensorEventListener {
         setContentView(R.layout.activity_game);
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+
+        toBackHandler = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message message) {
+                isToBack();
+
+                return false;
+            }
+        });
+        toBackListenerThread = new toBackListenerThread(toBackHandler);
+       toBackThread = new Thread(toBackListenerThread);
+       toBackThread.start();
 
         viewGame = new ViewGame(this);
         FrameLayout frameLayout = (FrameLayout)findViewById(R.id.gamefram);
@@ -59,16 +76,15 @@ public class Game extends AppCompatActivity implements SensorEventListener {
         public void onAccuracyChanged(Sensor sensor, int i) {
 
         }
-
-    public void StopOrRun(View view) {
-        if(run)
+        public void isToBack()
         {
-            viewGame.StopMovment();
+            if(viewGame.isToBack())
+            {
+                toBackListenerThread.toStop();
+                Intent Home = new Intent(this , MainActivity.class);
+                startActivity(Home);
+            }
         }
-        else {
-            viewGame.ContinueMovment();
-        }
-        run = !run;
 
-    }
+
 }
