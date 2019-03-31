@@ -3,11 +3,12 @@ package com.yaniv.student.project2;
 import android.media.MediaPlayer;
 
 public class AudioThread implements  Runnable {
-
+    boolean playLooping;
     MediaPlayer mediaPlayer;
     float log1;
-    public AudioThread(MediaPlayer mediaPlayer , int Volume)
+    public AudioThread(MediaPlayer mediaPlayer , int Volume , boolean playLooping)
     {
+        this.playLooping = playLooping;
 
       this.mediaPlayer = mediaPlayer;
 
@@ -27,7 +28,16 @@ public class AudioThread implements  Runnable {
     }
     @Override
     public void run() {
-        mediaPlayer.start();
+        do {
+            mediaPlayer.start();
+        }
+        while (playLooping);
 
+
+    }
+    public void ShutTheFuckUp()
+    {
+        playLooping = false;
+        mediaPlayer.stop();
     }
 }

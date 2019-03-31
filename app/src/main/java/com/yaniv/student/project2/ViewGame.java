@@ -30,6 +30,7 @@ public class ViewGame extends View
 {
     Handler handler;
     Thread thread;
+    AudioThread audioThread;
     boolean isFalling = true , IsOutside = false , isSet = false , isRun = true , isToBack = false;
     Context context;
     int points = 0 , life = 3 , touch = 0;
@@ -48,7 +49,8 @@ public class ViewGame extends View
         this.context=context;
         putin = BitmapFactory.decodeResource(getResources() , R.drawable.putin);
         heart = BitmapFactory.decodeResource(getResources() , R.drawable.heart);
-
+        audioThread = new AudioThread(MediaPlayer.create(context , R.raw.gamesong) , 99 , true);
+        new Thread(audioThread).start();
 
         pingpong = MediaPlayer.create(context , R.raw.pingpong);
 
@@ -97,6 +99,9 @@ public class ViewGame extends View
               Gm = new GameThead(handler);
               thread =   new Thread(Gm);
               life = 3;
+              points = 0;
+              audioThread = new AudioThread(MediaPlayer.create(context , R.raw.gamesong) , 99 , true);
+              new Thread(audioThread).start();
               thread.start();
               touch = 0;
 
@@ -236,7 +241,7 @@ public class ViewGame extends View
             IsOutside = false;
 
             isFalling = false;
-            new Thread(new AudioThread(pingpong , 99)).start();
+            new Thread(new AudioThread(pingpong , 99 , false)).start();
 
 
 
@@ -265,6 +270,7 @@ public class ViewGame extends View
         }
         else {
             Gm.setEnded(true);
+            audioThread.ShutTheFuckUp();
             Bitmap over = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources() , R.drawable.game_over) , canvas.getWidth() / 3 , canvas.getHeight()/ 5 , false);
             Bitmap startover = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources() , R.drawable.startover) , canvas.getWidth() / 4 , canvas.getHeight() / 8 , false);
             Bitmap back = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources() , R.drawable.back) , canvas.getWidth() / 4 , canvas.getHeight() / 8 , false);
