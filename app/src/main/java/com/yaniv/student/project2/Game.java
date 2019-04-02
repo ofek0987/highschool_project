@@ -2,6 +2,7 @@ package com.yaniv.student.project2;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -19,11 +20,13 @@ public class Game extends AppCompatActivity implements SensorEventListener {
     Handler toBackHandler;
     Thread toBackThread;
     toBackListenerThread toBackListenerThread;
+    SharedPreferences sharedPreferences;
     private SensorManager senSensorManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedPreferences = getSharedPreferences("vols" , Context.MODE_PRIVATE);
         setContentView(R.layout.activity_game);
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -40,7 +43,7 @@ public class Game extends AppCompatActivity implements SensorEventListener {
        toBackThread = new Thread(toBackListenerThread);
        toBackThread.start();
 
-        viewGame = new ViewGame(this);
+        viewGame = new ViewGame(this , sharedPreferences.getInt("music" , 100) ,sharedPreferences.getInt("fx" , 100) );
         FrameLayout frameLayout = (FrameLayout)findViewById(R.id.gamefram);
         frameLayout.addView(viewGame);
 

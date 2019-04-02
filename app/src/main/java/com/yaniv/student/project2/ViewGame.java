@@ -33,23 +33,24 @@ public class ViewGame extends View
     AudioThread audioThread;
     boolean isFalling = true , IsOutside = false , isSet = false , isRun = true , isToBack = false;
     Context context;
-    int points = 0 , life = 3 , touch = 0;
+    int points = 0 , life = 3 , touch = 0 , musicVol , fxVol;
     MediaPlayer pingpong;
-    double  R_a  ,Y_a  , X_a  , adderY_a = 0   , X_b  , adderX_b  , R_b  , Y_b , FallAx = 1 , WidthC , HightC;
+    double  R_a  ,Y_a  , X_a  , adderY_a = 0   , X_b  , adderX_b  , R_b  , Y_b , FallAx , WidthC , HightC;
     Paint  pp = new Paint() ;
     Bitmap putin , trump , heart;
 
 
     GameThead Gm;
 
-    public ViewGame(Context context)
+    public ViewGame(Context context , int musicVol , int fxVol)
     {
         super(context);
-
+        this.musicVol = musicVol;
+        this.fxVol = fxVol;
         this.context=context;
         putin = BitmapFactory.decodeResource(getResources() , R.drawable.putin);
         heart = BitmapFactory.decodeResource(getResources() , R.drawable.heart);
-        audioThread = new AudioThread(MediaPlayer.create(context , R.raw.gamesong) , 99 , true);
+        audioThread = new AudioThread(MediaPlayer.create(context , R.raw.gamesong) , musicVol , true);
         new Thread(audioThread).start();
 
         pingpong = MediaPlayer.create(context , R.raw.pingpong);
@@ -82,25 +83,26 @@ public class ViewGame extends View
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        //return super.onTouchEvent(event);
+
         touch++;
         if(touch >= 2)
         {
             touch = 0;
 
             Gm.setRun(!Gm.getRun());
-            isRun = Gm.getRun();
+            isRun = !isRun;
         }
-        if(Gm.getEnded())
+        if(Gm.getEnded() )
         {
           if(event.getX() >= WidthC * 3 / 4 && event.getY() >= HightC / 8 && event.getY() <= HightC * 2 / 8 )
           {
               isSet = false;
+              isRun = true;
               Gm = new GameThead(handler);
               thread =   new Thread(Gm);
               life = 3;
               points = 0;
-              audioThread = new AudioThread(MediaPlayer.create(context , R.raw.gamesong) , 99 , true);
+              audioThread = new AudioThread(MediaPlayer.create(context , R.raw.gamesong) , musicVol , true);
               new Thread(audioThread).start();
               thread.start();
               touch = 0;
@@ -108,16 +110,24 @@ public class ViewGame extends View
           }
             if(event.getX() <= WidthC / 4 && event.getY() >= HightC / 8 && event.getY() <= HightC * 2 / 8 )
             {
+                audioThread.ShutTheFuckUp();
                 isToBack = true;
 
             }
+        }
+        if(event.getX() <= WidthC / 4 && event.getY() >= HightC / 8 && event.getY() <= HightC * 2 / 8 && !isRun )
+        {
+            Gm.setEnded(true);
+            audioThread.ShutTheFuckUp();
+            isToBack = true;
+
         }
 
 
 
 
 
-        return true;
+        return super.onTouchEvent(event);
 
     }
 
@@ -161,6 +171,7 @@ public class ViewGame extends View
     protected  void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (!isSet) {
+            FallAx = 1;
             HightC = canvas.getHeight();
             WidthC = canvas.getWidth();
             heart = Bitmap.createScaledBitmap(heart, (int) WidthC / 20, (int) WidthC / 20, false);
@@ -241,7 +252,7 @@ public class ViewGame extends View
             IsOutside = false;
 
             isFalling = false;
-            new Thread(new AudioThread(pingpong , 99 , false)).start();
+            new Thread(new AudioThread(pingpong , fxVol , false)).start();
 
 
 
@@ -277,6 +288,13 @@ public class ViewGame extends View
             canvas.drawBitmap(back , 0 , canvas.getHeight()  / 8 , new Paint()) ;
             canvas.drawBitmap(startover , canvas.getWidth() * 3 / 4 , canvas.getHeight()  / 8 , new Paint()) ;
             canvas.drawBitmap(over , (float) canvas.getWidth() / 3 ,2 * canvas.getHeight() / 5 , new Paint() );
+
+        }
+        if(!isRun)
+        {
+
+            Bitmap back = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources() , R.drawable.back) , canvas.getWidth() / 4 , canvas.getHeight() / 8 , false);
+            canvas.drawBitmap(back , 0 , canvas.getHeight()  / 8 , new Paint()) ;
 
         }
 
