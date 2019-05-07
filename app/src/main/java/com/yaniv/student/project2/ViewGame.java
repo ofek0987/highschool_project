@@ -3,6 +3,8 @@ package com.yaniv.student.project2;
 
 import android.content.Context;
 import android.content.Intent;
+
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -38,6 +40,7 @@ public class ViewGame extends View
     private double  R_a  ,Y_a  , X_a  , adderY_a = 0   , X_b  , adderX_b  , R_b  , Y_b , FallAx , WidthC , HightC;
     private Paint  pp = new Paint() ;
     private Bitmap putin , trump , heart;
+    private SharedPreferences sharedPreferences;
 
 
     GameThead Gm;
@@ -45,6 +48,7 @@ public class ViewGame extends View
     public ViewGame(Context context , int musicVol , int fxVol)
     {
         super(context);
+        sharedPreferences = context.getSharedPreferences("bestS" , Context.MODE_PRIVATE);
         this.musicVol = musicVol;
         this.fxVol = fxVol;
         this.context=context;
@@ -94,6 +98,7 @@ public class ViewGame extends View
         }
         if(Gm.getEnded() )
         {
+
           if(event.getX() >= WidthC * 3 / 4 && event.getY() >= HightC / 8 && event.getY() <= HightC * 2 / 8 )
           {
               isSet = false;
@@ -111,6 +116,7 @@ public class ViewGame extends View
             if(event.getX() <= WidthC / 4 && event.getY() >= HightC / 8 && event.getY() <= HightC * 2 / 8 )
             {
                 audioThread.ShutTheFuckUp();
+                pp.setColor(Color.BLACK);
                 isToBack = true;
 
             }
@@ -119,6 +125,7 @@ public class ViewGame extends View
         {
             Gm.setEnded(true);
             audioThread.ShutTheFuckUp();
+            pp.setColor(Color.BLACK);
             isToBack = true;
 
         }
@@ -248,6 +255,7 @@ public class ViewGame extends View
             if(IsOutside)
             {
                 points++;
+
             }
             IsOutside = false;
 
@@ -299,6 +307,12 @@ public class ViewGame extends View
         }
 
         pp.setTextSize((float) 0.05 * canvas.getHeight());
+        if(points > sharedPreferences.getInt("bestS" , 0))
+        {
+            sharedPreferences.edit().putInt("bestS" , points).commit();
+            pp.setColor(Color.RED);
+        }
+
 
         String Spoints = "Points : " +  String.valueOf(points);
        canvas.drawText(Spoints , 10 , (float)  canvas.getHeight() / 17 , pp);

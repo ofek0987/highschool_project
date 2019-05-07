@@ -7,12 +7,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity  {
    // ViewGame ViewGame;
    private Intent gameIntent , termsIntent;
     private SeekBar musicBar , fxBar;
-    int musicVol , fxVol;
+   private int musicVol , fxVol;
+    private TextView bestscoure;
 
     SharedPreferences sharedPreferences;
 
@@ -21,6 +23,8 @@ public class MainActivity extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        bestscoure = findViewById(R.id.BestScoure);
+        bestscoure.setText("Best Scoure : "  + String.valueOf( getSharedPreferences("bestS" ,Context.MODE_PRIVATE).getInt("bestS" , 0)));
         sharedPreferences = getSharedPreferences("vols" ,Context.MODE_PRIVATE);
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         gameIntent = new Intent(this , Game.class);
