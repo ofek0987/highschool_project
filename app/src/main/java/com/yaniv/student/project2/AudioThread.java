@@ -1,11 +1,13 @@
 package com.yaniv.student.project2;
 
 import android.media.MediaPlayer;
+import android.util.Log;
 
 public class AudioThread implements  Runnable {
-    boolean playLooping;
-    MediaPlayer mediaPlayer;
-    float log1;
+
+    private  boolean playLooping;
+    private  MediaPlayer mediaPlayer;
+    private  float log1;
     public AudioThread(MediaPlayer mediaPlayer , int Volume , boolean playLooping)
     {
         this.playLooping = playLooping;
@@ -29,7 +31,14 @@ public class AudioThread implements  Runnable {
     @Override
     public void run() {
         do {
-            mediaPlayer.start();
+            try{
+                if(!mediaPlayer.isPlaying())
+                    mediaPlayer.start();
+            }
+            catch (Exception e)
+            {
+                    Log.d("Exception", e.getMessage());
+            }
         }
         while (playLooping);
 

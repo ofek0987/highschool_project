@@ -16,11 +16,11 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 public class Game extends AppCompatActivity implements SensorEventListener {
-    ViewGame viewGame;
-    Handler toBackHandler;
-    Thread toBackThread;
-    toBackListenerThread toBackListenerThread;
-    SharedPreferences sharedPreferences;
+    private ViewGame viewGame;
+    private Handler toBackHandler;
+    private Thread toBackThread;
+    private toBackListenerThread toBackListenerThread;
+    private SharedPreferences sharedPreferences;
     private SensorManager senSensorManager;
 
     @Override

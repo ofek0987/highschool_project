@@ -10,8 +10,8 @@ import android.widget.SeekBar;
 
 public class MainActivity extends AppCompatActivity  {
    // ViewGame ViewGame;
-    Intent gameIntent , termsIntent;
-    SeekBar musicBar , fxBar;
+   private Intent gameIntent , termsIntent;
+    private SeekBar musicBar , fxBar;
     int musicVol , fxVol;
 
     SharedPreferences sharedPreferences;

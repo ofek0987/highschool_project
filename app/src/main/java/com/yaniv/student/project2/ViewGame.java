@@ -28,16 +28,16 @@ import android.widget.ImageView;
 
 public class ViewGame extends View
 {
-    Handler handler;
-    Thread thread;
-    AudioThread audioThread;
-    boolean isFalling = true , IsOutside = false , isSet = false , isRun = true , isToBack = false;
-    Context context;
-    int points = 0 , life = 3 , touch = 0 , musicVol , fxVol;
-    MediaPlayer pingpong;
-    double  R_a  ,Y_a  , X_a  , adderY_a = 0   , X_b  , adderX_b  , R_b  , Y_b , FallAx , WidthC , HightC;
-    Paint  pp = new Paint() ;
-    Bitmap putin , trump , heart;
+    private Handler handler;
+    private Thread thread;
+    private AudioThread audioThread;
+    private boolean isFalling = true , IsOutside = false , isSet = false , isRun = true , isToBack = false;
+    private Context context;
+    private int points = 0 , life = 3 , touch = 0 , musicVol , fxVol;
+    private MediaPlayer pingpong;
+    private double  R_a  ,Y_a  , X_a  , adderY_a = 0   , X_b  , adderX_b  , R_b  , Y_b , FallAx , WidthC , HightC;
+    private Paint  pp = new Paint() ;
+    private Bitmap putin , trump , heart;
 
 
     GameThead Gm;

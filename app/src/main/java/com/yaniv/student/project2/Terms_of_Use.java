@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 
 public class Terms_of_Use extends AppCompatActivity {
-    Intent mainIntent;
+    private Intent mainIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -4,7 +4,7 @@ import android.os.Handler;
 
 public class toBackListenerThread implements Runnable {
     private Handler handler;
-    Boolean toStop = false;
+    private Boolean toStop = false;
     public toBackListenerThread(Handler handler)
     {
         this.handler = handler;
