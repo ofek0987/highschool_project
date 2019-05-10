@@ -23,6 +23,8 @@ public class MainActivity extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Intent reminder = new Intent(this , reminderService.class);
+        startService(reminder);
         bestscoure = findViewById(R.id.BestScoure);
         bestscoure.setText("Best Score : "  + String.valueOf( getSharedPreferences("bestS" ,Context.MODE_PRIVATE).getInt("bestS" , 0)));
         sharedPreferences = getSharedPreferences("vols" ,Context.MODE_PRIVATE);

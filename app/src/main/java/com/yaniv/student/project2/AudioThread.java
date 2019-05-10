@@ -57,7 +57,7 @@ public class AudioThread implements  Runnable {
         catch (Exception ex)
         {
             Log.d("Exception", ex.getMessage());
-            log1=(float)(Math.log(101-50)/Math.log(101));
+            log1=(float)(Math.log(101-100)/Math.log(101));
         }
         finally {
             this.mediaPlayer.setVolume(1 - log1, 1 - log1);
