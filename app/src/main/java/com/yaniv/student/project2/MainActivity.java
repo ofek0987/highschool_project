@@ -10,7 +10,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity  {
-   // ViewGame ViewGame;
+
    private Intent gameIntent , termsIntent;
     private SeekBar musicBar , fxBar;
    private int musicVol , fxVol;
@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         bestscoure = findViewById(R.id.BestScoure);
-        bestscoure.setText("Best Scoure : "  + String.valueOf( getSharedPreferences("bestS" ,Context.MODE_PRIVATE).getInt("bestS" , 0)));
+        bestscoure.setText("Best Score : "  + String.valueOf( getSharedPreferences("bestS" ,Context.MODE_PRIVATE).getInt("bestS" , 0)));
         sharedPreferences = getSharedPreferences("vols" ,Context.MODE_PRIVATE);
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         gameIntent = new Intent(this , Game.class);
@@ -85,12 +85,15 @@ public class MainActivity extends AppCompatActivity  {
 
 
     public void startGame(View view) {
+
         startActivity(gameIntent);
+        finish();
     }
 
 
     public void openTeams(View view) {
         startActivity(termsIntent);
+        finish();
 
     }
 }

@@ -49,4 +49,19 @@ public class AudioThread implements  Runnable {
         playLooping = false;
         mediaPlayer.stop();
     }
+    public void setVolume(int volume)
+    {
+        try {
+            log1=(float)(Math.log(101-volume)/Math.log(101));
+        }
+        catch (Exception ex)
+        {
+            Log.d("Exception", ex.getMessage());
+            log1=(float)(Math.log(101-50)/Math.log(101));
+        }
+        finally {
+            this.mediaPlayer.setVolume(1 - log1, 1 - log1);
+        }
+
+    }
 }

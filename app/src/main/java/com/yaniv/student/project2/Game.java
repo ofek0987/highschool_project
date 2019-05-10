@@ -53,13 +53,14 @@ public class Game extends AppCompatActivity implements SensorEventListener {
     }
     protected void onResume() {
         super.onResume();
-
+        viewGame.setSongVol(sharedPreferences.getInt("music" , 100));
         senSensorManager.registerListener(this, senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_FASTEST);
 
     }
     protected void onPause() {
         super.onPause();
         senSensorManager.unregisterListener(this);
+        viewGame.setSongVol(0);
     }
 
     @Override
@@ -86,7 +87,9 @@ public class Game extends AppCompatActivity implements SensorEventListener {
                 toBackListenerThread.toStop();
                 Intent Home = new Intent(this , MainActivity.class);
                 startActivity(Home);
+                finish();
             }
+
         }
 
 

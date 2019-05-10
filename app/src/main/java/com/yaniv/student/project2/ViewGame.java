@@ -74,6 +74,7 @@ public class ViewGame extends View
       thread =   new Thread(Gm);
 
     }
+
     public void StartMovment()
     {
         thread.start();
@@ -103,6 +104,7 @@ public class ViewGame extends View
           {
               isSet = false;
               isRun = true;
+              pp.setColor(Color.BLACK);
               Gm = new GameThead(handler);
               thread =   new Thread(Gm);
               life = 3;
@@ -343,4 +345,5 @@ public class ViewGame extends View
     public boolean isToBack() {
         return isToBack;
     }
+    public void setSongVol(int vol) {audioThread.setVolume(vol);}
 }

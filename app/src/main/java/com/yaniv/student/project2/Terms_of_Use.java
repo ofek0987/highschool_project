@@ -19,5 +19,6 @@ public class Terms_of_Use extends AppCompatActivity {
 
     public void back(View view) {
         startActivity(mainIntent);
+        finish();
     }
 }
