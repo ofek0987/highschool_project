@@ -20,7 +20,7 @@
         <activity android:name=".Terms_of_Use"></activity>
         <service
             android:name=".reminderService"
-            android:exported="false"/>
+            />
     </application>
 
 </manifest>
