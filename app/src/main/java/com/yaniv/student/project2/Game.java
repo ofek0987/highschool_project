@@ -25,7 +25,7 @@ public class Game extends AppCompatActivity implements SensorEventListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sharedPreferences = getSharedPreferences("vols" , Context.MODE_PRIVATE); //getting shared Preferences
+        sharedPreferences = getSharedPreferences("Settings" , Context.MODE_PRIVATE); //getting shared Preferences
         setContentView(R.layout.activity_game);
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); //making sure that the screen will not spin
         senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
