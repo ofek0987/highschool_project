@@ -25,11 +25,11 @@ public class MainActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Intent reminder = new Intent(this , reminderService.class);
-        startService(reminder);
+        startService(reminder); //starts the reminder service
         bestscoure = findViewById(R.id.BestScoure);
-        bestscoure.setText("Best Score : "  + String.valueOf( getSharedPreferences("bestS" ,Context.MODE_PRIVATE).getInt("bestS" , 0)));
+        bestscoure.setText("Best Score : "  + String.valueOf( getSharedPreferences("bestS" ,Context.MODE_PRIVATE).getInt("bestS" , 0))); //getting the saved value for the higher score
         sharedPreferences = getSharedPreferences("vols" ,Context.MODE_PRIVATE);
-        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);  //making sure that the screen will not spin
         gameIntent = new Intent(this , Game.class);
         termsIntent = new Intent(this , Terms_of_Use.class);
         musicBar = findViewById(R.id.musicV);
@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity  {
              @Override
              public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                  musicVol = i;
-                 sharedPreferences.edit().putInt("music",musicVol).commit();
+                 sharedPreferences.edit().putInt("music",musicVol).commit(); //saving the value for the volume for the music that the user entered
                  seekBar.setProgress(musicVol);
              }
 
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity  {
              @Override
              public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                  fxVol = i;
-                 sharedPreferences.edit().putInt("fx",fxVol).commit();
+                 sharedPreferences.edit().putInt("fx",fxVol).commit();  //saving the value for the volume of the fx that the user entered
                  seekBar.setProgress(fxVol);
              }
 
@@ -89,13 +89,13 @@ public class MainActivity extends AppCompatActivity  {
 
     public void startGame(View view) {
 
-        startActivity(gameIntent);
+        startActivity(gameIntent); //starts the game
         finish();
     }
 
 
     public void openTeams(View view) {
-        startActivity(termsIntent);
+        startActivity(termsIntent); //open the ; terms of use' activity
         finish();
 
     }
@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity  {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        getMenuInflater().inflate(R.menu.menu, menu);
+        getMenuInflater().inflate(R.menu.menu, menu); //makes my menu appear
         return true;
     }
 }

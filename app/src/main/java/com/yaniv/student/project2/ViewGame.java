@@ -66,7 +66,7 @@ public class ViewGame extends View
             public boolean handleMessage(Message msg)
             {
 
-                invalidate();
+                invalidate(); //makes the whole game move(calling onDraw)
                 return true;
             }
         });
@@ -75,12 +75,12 @@ public class ViewGame extends View
 
     }
 
-    public void StartMovment()
+    public void startMovement() //starts the movement of the game
     {
         thread.start();
         isRun = true;
     }
-   public void StopMovment()
+   public void stopMovement() //pause the game
     {
           Gm.setRun(false);
           isRun = false;
@@ -92,12 +92,12 @@ public class ViewGame extends View
         touch++;
         if(touch >= 2)
         {
-            touch = 0;
+            touch = 0;        //stops the movement of the game if the user clicked twice of the screen
 
             Gm.setRun(!Gm.getRun());
             isRun = !isRun;
         }
-        if(Gm.getEnded() )
+        if(Gm.getEnded() ) //if the user lost
         {
 
           if(event.getX() >= WidthC * 3 / 4 && event.getY() >= HightC / 8 && event.getY() <= HightC * 2 / 8 )
@@ -106,7 +106,7 @@ public class ViewGame extends View
               isRun = true;
               pp.setColor(Color.BLACK);
               Gm = new GameThead(handler);
-              thread =   new Thread(Gm);
+              thread =   new Thread(Gm);    //if user pressed the 'start over' button this restarts the game
               life = 3;
               points = 0;
               audioThread = new AudioThread(MediaPlayer.create(context , R.raw.gamesong) , musicVol , true);
@@ -118,7 +118,7 @@ public class ViewGame extends View
             if(event.getX() <= WidthC / 4 && event.getY() >= HightC / 8 && event.getY() <= HightC * 2 / 8 )
             {
                 audioThread.ShutTheFuckUp();
-                pp.setColor(Color.BLACK);
+                pp.setColor(Color.BLACK);  //if user pressed the 'back' button this  returns the user to the main activity
                 isToBack = true;
 
             }
@@ -126,9 +126,10 @@ public class ViewGame extends View
         if(event.getX() <= WidthC / 4 && event.getY() >= HightC / 8 && event.getY() <= HightC * 2 / 8 && !isRun )
         {
             Gm.setEnded(true);
-            audioThread.ShutTheFuckUp();
+            audioThread.ShutTheFuckUp(); //if user pressed the 'back' button and the game is paused  this  returns the user to the main activity
             pp.setColor(Color.BLACK);
             isToBack = true;
+
 
         }
 
@@ -140,7 +141,7 @@ public class ViewGame extends View
 
     }
 
-    public void ContinueMovment()
+    public void continueMovement() //continues the game
     {
         Gm.setRun(true);
         isRun = true;
@@ -148,7 +149,7 @@ public class ViewGame extends View
     }
 
 
-    public static Bitmap drawableToBitmap (Drawable drawable) {
+    public static Bitmap drawableToBitmap (Drawable drawable) {   //A function that converts drawable To Bitmap , used in the process of making circular images
         Bitmap bitmap = null;
 
         if (drawable instanceof BitmapDrawable) {
@@ -179,7 +180,7 @@ public class ViewGame extends View
     @Override
     protected  void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (!isSet) {
+        if (!isSet) {   //set all the things that require the canvas
             FallAx = 1;
             HightC = canvas.getHeight();
             WidthC = canvas.getWidth();
@@ -195,7 +196,7 @@ public class ViewGame extends View
             trump = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.trump), (int) R_a * 2, (int) R_a * 2, false);
 
             RoundedBitmapDrawable Rtrump = RoundedBitmapDrawableFactory.create(getResources(), trump);
-            Rtrump.setCornerRadius((float) R_a);
+            Rtrump.setCornerRadius((float) R_a); //makes trump circular
             trump = drawableToBitmap(Rtrump);
             isSet = true;
         }
@@ -203,35 +204,35 @@ public class ViewGame extends View
 
             FallAx = FallAx - 0.0001 * (FallAx - 0.3);
             R_b = R_b - 0.0003 * (R_b - 0.03 * canvas.getHeight());
-            if (adderX_b > 0) {
+            if (adderX_b > 0) {                                               //makes the game harder over time(faster and putin become smaller)
                 adderX_b = adderX_b + 0.0001 * (0.05 * canvas.getWidth() - adderX_b);
             } else {
                 adderX_b = adderX_b - 0.0001 * (0.05 * canvas.getWidth() + adderX_b);
             }
 
-            Y_b = canvas.getHeight() - R_b;
+            Y_b = canvas.getHeight() - R_b; //makes putin sit down on the ground
 
 
 
-        if(X_b + R_b >= canvas.getWidth()  || X_b - R_b <= 0)
+        if(X_b + R_b >= canvas.getWidth()  || X_b - R_b <= 0) //putin bumps into the walls
         {
             adderX_b = -1 * adderX_b;
         }
-        if(Y_a + R_a >= canvas.getHeight())
+        if(Y_a + R_a >= canvas.getHeight())  //trump bumps into the ground
         {
 
             isFalling = false;
             life--;
         }
-        if( Y_a - R_a <= 0)
+        if( Y_a - R_a <= 0) //Trump bumps into the ceiling
         {
             isFalling = true;
         }
-        double k = Math.sqrt((double)canvas.getHeight() / 1680) / FallAx;
+        double k = Math.sqrt((double)canvas.getHeight() / 1680) / FallAx;  //Ensures that the fall velocity will be uniform for different devices
         if(isFalling)
         {
 
-            adderY_a =k * Math.sqrt(Math.abs(Y_a -  R_a))   ;
+            adderY_a =k * Math.sqrt(Math.abs(Y_a -  R_a))   ;   //demonstrate free falling according to newton equations
         }
         else {
 
@@ -243,7 +244,7 @@ public class ViewGame extends View
 
 
            Y_a += adderY_a;
-           X_b += adderX_b;
+           X_b += adderX_b; //"moves" trump and putin
 
 
 
@@ -251,18 +252,18 @@ public class ViewGame extends View
 
 
         double d = (X_a - X_b)*(X_a - X_b) + (Y_a - Y_b)*(Y_a - Y_b);
-        d = Math.sqrt(d);
-        if(d  <= R_a + R_b)
+        d = Math.sqrt(d); //calculating the distance between the center of trump and the center of putin
+        if(d  <= R_a + R_b) //Trump and Putin collides
         {
             if(IsOutside)
             {
-                points++;
+                points++; //add point and make sure that only one point will be added for one collide
 
             }
             IsOutside = false;
 
             isFalling = false;
-            new Thread(new AudioThread(pingpong , fxVol , false)).start();
+            new Thread(new AudioThread(pingpong , fxVol , false)).start(); //playing fx
 
 
 
@@ -280,7 +281,7 @@ public class ViewGame extends View
             canvas.drawBitmap(heart , (float) (16 * WidthC / 20 ), 10 , new Paint());
             canvas.drawBitmap(heart , (float) (18 * WidthC / 20 ), 10 , new Paint());
         }
-        else if (life == 2)
+        else if (life == 2)                                                 //hearts drawing according to the life value
         {
             canvas.drawBitmap(heart , (float) (16 * WidthC / 20 ), 10 , new Paint());
             canvas.drawBitmap(heart , (float) (18 * WidthC / 20 ), 10 , new Paint());
@@ -290,18 +291,18 @@ public class ViewGame extends View
             canvas.drawBitmap(heart , (float) (18 * WidthC / 20 ), 10 , new Paint());
         }
         else {
-            Gm.setEnded(true);
+            Gm.setEnded(true);  //life value is 0 the player has lost
             audioThread.ShutTheFuckUp();
             Bitmap over = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources() , R.drawable.game_over) , canvas.getWidth() / 3 , canvas.getHeight()/ 5 , false);
             Bitmap startover = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources() , R.drawable.startover) , canvas.getWidth() / 4 , canvas.getHeight() / 8 , false);
             Bitmap back = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources() , R.drawable.back) , canvas.getWidth() / 4 , canvas.getHeight() / 8 , false);
-            canvas.drawBitmap(back , 0 , canvas.getHeight()  / 8 , new Paint()) ;
+            canvas.drawBitmap(back , 0 , canvas.getHeight()  / 8 , new Paint()) ; //drawing the buttons
             canvas.drawBitmap(startover , canvas.getWidth() * 3 / 4 , canvas.getHeight()  / 8 , new Paint()) ;
             canvas.drawBitmap(over , (float) canvas.getWidth() / 3 ,2 * canvas.getHeight() / 5 , new Paint() );
 
         }
         if(!isRun)
-        {
+        { //the game has paused , drawing the "back" button
 
             Bitmap back = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources() , R.drawable.back) , canvas.getWidth() / 4 , canvas.getHeight() / 8 , false);
             canvas.drawBitmap(back , 0 , canvas.getHeight()  / 8 , new Paint()) ;
@@ -311,7 +312,7 @@ public class ViewGame extends View
         pp.setTextSize((float) 0.05 * canvas.getHeight());
         if(points > sharedPreferences.getInt("bestS" , 0))
         {
-            sharedPreferences.edit().putInt("bestS" , points).commit();
+            sharedPreferences.edit().putInt("bestS" , points).commit(); //if the point value is higher then the saved value the points value will be saved and the text that indicate the points value become red
             pp.setColor(Color.RED);
         }
 
@@ -320,9 +321,9 @@ public class ViewGame extends View
        canvas.drawText(Spoints , 10 , (float)  canvas.getHeight() / 17 , pp);
 
         RoundedBitmapDrawable Rputin = RoundedBitmapDrawableFactory.create(getResources() , Bitmap.createScaledBitmap(putin , (int) R_b * 2 , (int) R_b * 2 , false));
-        Rputin.setCornerRadius((float)R_b);
+        Rputin.setCornerRadius((float)R_b);  // makes putin circular
         canvas.drawBitmap(drawableToBitmap(Rputin) ,(float) (X_b - R_b), (float)(Y_b - R_b)  , new Paint());
-        canvas.drawBitmap(trump , (float)(X_a - R_a) , (float)(Y_a - R_a) , new Paint());
+        canvas.drawBitmap(trump , (float)(X_a - R_a) , (float)(Y_a - R_a) , new Paint()); //drawing trump and putin
 
 
 
@@ -335,7 +336,7 @@ public class ViewGame extends View
             X_a +=  a;
         }
 
-         else if(X_a - R_a - 10 > 0 && a < 0 && isRun)
+         else if(X_a - R_a - 10 > 0 && a < 0 && isRun) //function that used in order to apply the sensors change
         {
             X_a +=  a;
         }
@@ -344,6 +345,6 @@ public class ViewGame extends View
 
     public boolean isToBack() {
         return isToBack;
-    }
-    public void setSongVol(int vol) {audioThread.setVolume(vol);}
+    } //says if the user wants to return to the main activity
+    public void setSongVol(int vol) {audioThread.setVolume(vol);}//set the music volume
 }

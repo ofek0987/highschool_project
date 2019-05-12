@@ -2,7 +2,7 @@ package com.yaniv.student.project2;
 
 import android.os.Handler;
 
-public class toBackListenerThread implements Runnable {
+public class toBackListenerThread implements Runnable { //thread that checks if the user pressed the "back" button while playing
     private Handler handler;
     private Boolean toStop = false;
     public toBackListenerThread(Handler handler)

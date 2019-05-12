@@ -12,7 +12,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.FrameLayout;
 
 public class Game extends AppCompatActivity implements SensorEventListener {
@@ -26,17 +25,17 @@ public class Game extends AppCompatActivity implements SensorEventListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sharedPreferences = getSharedPreferences("vols" , Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("vols" , Context.MODE_PRIVATE); //getting shared Preferences
         setContentView(R.layout.activity_game);
-        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); //making sure that the screen will not spin
         senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
         toBackHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message message) {
-                isToBack();
+                Back();
 
-                return false;
+                return false;                                                                    //thread checks if the user pressed the 'back' button
             }
         });
         toBackListenerThread = new toBackListenerThread(toBackHandler);
@@ -45,22 +44,22 @@ public class Game extends AppCompatActivity implements SensorEventListener {
 
         viewGame = new ViewGame(this , sharedPreferences.getInt("music" , 100) ,sharedPreferences.getInt("fx" , 100) );
         FrameLayout frameLayout = (FrameLayout)findViewById(R.id.gamefram);
-        frameLayout.addView(viewGame);
+        frameLayout.addView(viewGame);   //adding my custom view to frame layout
 
 
-        viewGame.StartMovment();
+        viewGame.startMovement(); //start the game
 
     }
     protected void onResume() {
         super.onResume();
-        viewGame.setSongVol(sharedPreferences.getInt("music" , 100));
-        senSensorManager.registerListener(this, senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_FASTEST);
+        viewGame.setSongVol(sharedPreferences.getInt("music" , 100)); //setting music volume to the saved volume
+        senSensorManager.registerListener(this, senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_FASTEST); //registering the sensor manager
 
     }
     protected void onPause() {
         super.onPause();
-        senSensorManager.unregisterListener(this);
-        viewGame.setSongVol(0);
+        senSensorManager.unregisterListener(this); //unregistering the sensor manager
+        viewGame.setSongVol(0); ////setting music volume to the 0
     }
 
     @Override
@@ -70,7 +69,7 @@ public class Game extends AppCompatActivity implements SensorEventListener {
             double deltax = sensorEvent.values[0];
 
             if (viewGame != null) {
-              viewGame.Add_X_a(- deltax);
+              viewGame.Add_X_a(- deltax);  //applying the change of the sensor on the game
 
             }
 
@@ -80,9 +79,9 @@ public class Game extends AppCompatActivity implements SensorEventListener {
         public void onAccuracyChanged(Sensor sensor, int i) {
 
         }
-        public void isToBack()
+        public void Back()
         {
-            if(viewGame.isToBack())
+            if(viewGame.isToBack())    //if user pressed the 'back' button this function returns the user to the main activity
             {
                 toBackListenerThread.toStop();
                 Intent Home = new Intent(this , MainActivity.class);

@@ -3,7 +3,7 @@ package com.yaniv.student.project2;
 
 import android.os.Handler;
 
-public class GameThead implements Runnable {
+public class GameThead implements Runnable {  //thread that refreshes the game and basically makes the whole game moving
    private Handler handler;
    private Boolean isRun , isEnded = false;
     public GameThead(Handler handler)
