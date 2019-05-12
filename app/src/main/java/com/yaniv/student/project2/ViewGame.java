@@ -36,7 +36,7 @@ public class ViewGame extends View
     private boolean isFalling = true , IsOutside = false , isSet = false , isRun = true , isToBack = false;
     private Context context;
     private int points = 0 , life = 3 , touch = 0 , musicVol , fxVol;
-    private MediaPlayer pingpong;
+    private MediaPlayer pingpong , blyat , sonof;
     private double  R_a  ,Y_a  , X_a  , adderY_a = 0   , X_b  , adderX_b  , R_b  , Y_b , FallAx , WidthC , HightC;
     private Paint  pp = new Paint() ;
     private Bitmap putin , trump , heart;
@@ -58,7 +58,8 @@ public class ViewGame extends View
         new Thread(audioThread).start();
 
         pingpong = MediaPlayer.create(context , R.raw.pingpong);
-
+        blyat = MediaPlayer.create(context , R.raw.blyat);
+        sonof = MediaPlayer.create(context , R.raw.sonof);
 
         handler = new Handler(new Handler.Callback()
         {
@@ -92,7 +93,7 @@ public class ViewGame extends View
         touch++;
         if(touch >= 2)
         {
-            touch = 0;        //stops the movement of the game if the user clicked twice of the screen
+            touch = 0;        //pause the game if the user clicked twice of the screen
 
             Gm.setRun(!Gm.getRun());
             isRun = !isRun;
@@ -222,6 +223,8 @@ public class ViewGame extends View
         {
 
             isFalling = false;
+            new Thread(new AudioThread(sonof , fxVol , false)).start();
+
             life--;
         }
         if( Y_a - R_a <= 0) //Trump bumps into the ceiling
@@ -264,6 +267,8 @@ public class ViewGame extends View
 
             isFalling = false;
             new Thread(new AudioThread(pingpong , fxVol , false)).start(); //playing fx
+            new Thread(new AudioThread(blyat , fxVol , false)).start();
+
 
 
 
@@ -312,7 +317,7 @@ public class ViewGame extends View
         pp.setTextSize((float) 0.05 * canvas.getHeight());
         if(points > sharedPreferences.getInt("bestS" , 0))
         {
-            sharedPreferences.edit().putInt("bestS" , points).commit(); //if the point value is higher then the saved value the points value will be saved and the text that indicate the points value become red
+            sharedPreferences.edit().putInt("bestS" , points).apply(); //if the point value is higher then the saved value the points value will be saved and the text that indicate the points value become red
             pp.setColor(Color.RED);
         }
 
